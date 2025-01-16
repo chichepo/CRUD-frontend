@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import axiosInstance from '../config/axiosConfig';
 
-const useFetchData = (apiEndpoint) => { // Accept the API endpoint as a parameter
-    const [data, setData] = useState([]);
+const useFetchData = (apiEndpoint) => {
+    const [data, setData] = useState(null); // Start with null for loading state
 
     const fetchData = async () => {
         try {
-            const response = await axiosInstance.get(apiEndpoint); // Use the provided API endpoint
+            const response = await axiosInstance.get(apiEndpoint);
             setData(response.data);
         } catch (error) {
             console.error("An error occurred while fetching data:", error);
@@ -15,7 +15,7 @@ const useFetchData = (apiEndpoint) => { // Accept the API endpoint as a paramete
 
     useEffect(() => {
         fetchData();
-    }, [apiEndpoint]); // Include apiEndpoint as a dependency
+    }, [apiEndpoint]);
 
     return { data, fetchData };
 };

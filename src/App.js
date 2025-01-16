@@ -1,8 +1,12 @@
-//app.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AppBarComponent from './components/AppBarComponent';
-import TableComponent from './components/TableComponent';
 import CitiesTableComponent from './components/CitiesTableComponent';
+import ProjectsTableComponent from './components/ProjectsTableComponent';
+import BuildingsTableComponent from './components/BuildingsTableComponent';
+import ApartmentTypesTableComponent from './components/ApartmentTypesTableComponent';
+import ApartmentsTableComponent from './components/ApartmentsTableComponent';
+import RentalPricesTableComponent from './components/RentalPricesTableComponent';
+import ExternalParametersTableComponent from './components/ExternalParametersTableComponent';
 
 const menuItems = [
   'Cities',
@@ -14,67 +18,32 @@ const menuItems = [
   'ExternalParameters',
 ];
 
-const getDefaultMenuItem = () => menuItems[0]; // Set the default menu item here
+const componentMap = {
+  Cities: CitiesTableComponent,
+  Projects: ProjectsTableComponent,
+  Buildings: BuildingsTableComponent,
+  ApartmentTypes: ApartmentTypesTableComponent,
+  Apartments: ApartmentsTableComponent,
+  RentalPrices: RentalPricesTableComponent,
+  ExternalParameters: ExternalParametersTableComponent,
+};
 
 const App = () => {
-  const [selectedMenuItem, setSelectedMenuItem] = useState(getDefaultMenuItem());
-  const [apiEndpoint, setApiEndpoint] = useState('/api/cities'); // Initialize with a default value
+  const [selectedMenuItem, setSelectedMenuItem] = useState('Cities');
+  const [apiEndpoint, setApiEndpoint] = useState('/api/cities');
 
   const handleMenuClick = (menuItem) => {
     setSelectedMenuItem(menuItem);
-
-    switch (menuItem) {
-      case 'Cities':
-        setApiEndpoint('/api/cities');
-        break;
-      case 'Projects':
-        setApiEndpoint('/api/projects');
-        break;
-      // Add cases for other menu items as needed
-      default:
-        setApiEndpoint('/api/cities'); // Set a default if needed
-        break;
-    }
-
-    console.log('Selected Menu Item:', menuItem);
-    console.log('Constructed API Endpoint:', apiEndpoint);
+    setApiEndpoint(`/api/${menuItem.toLowerCase()}`);
   };
 
-  const renderSelectedComponents = () => {
-    if (!selectedMenuItem || !formsAndTables[selectedMenuItem]) {
-      return null;
-    }
+  const SelectedComponent = componentMap[selectedMenuItem];
 
-    const { form, table } = formsAndTables[selectedMenuItem];
-
-    return (
-      <div key={selectedMenuItem}>
-        <h2>{selectedMenuItem} Management</h2>
-        {form}
-        {table}
-      </div>
-    );
-  };
-
-  const formsAndTables = menuItems.reduce((acc, menuItem) => {
-    acc[menuItem] = {
-      table: <TableComponent tableType={menuItem} />,
-    };
-    return acc;
-  }, {});
-
-  console.log('apiEndpoint in App.js:', apiEndpoint);
   return (
     <div>
-    <AppBarComponent onMenuClick={handleMenuClick} />
-    {selectedMenuItem === 'Cities' ? (
-      <CitiesTableComponent apiEndpoint={apiEndpoint} />
-    ) : selectedMenuItem === 'Projects' ? (
-      <ProjectsTableComponent apiEndpoint={apiEndpoint} />
-    ) : (
-      <TableComponent apiEndpoint={apiEndpoint} />
-    )}
-  </div>
+      <AppBarComponent onMenuClick={handleMenuClick} />
+      {SelectedComponent && <SelectedComponent apiEndpoint={apiEndpoint} />}
+    </div>
   );
 };
 
